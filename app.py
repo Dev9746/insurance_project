@@ -1,6 +1,7 @@
 import streamlit as st
 import numpy as np
 import joblib
+import pandas as pd
 
 # ===============================
 # LOAD MODEL
@@ -11,19 +12,19 @@ scaler = joblib.load("scaler.pkl")
 # ===============================
 # PAGE CONFIG
 # ===============================
-st.set_page_config(page_title="Insurance Dashboard", layout="wide")
+st.set_page_config(page_title="Insurance AI Dashboard", layout="wide")
 
 # ===============================
-# CUSTOM STYLE
+# STYLE
 # ===============================
 st.markdown("""
 <style>
 [data-testid="stAppViewContainer"] {
-background: linear-gradient(to right, #1e3c72, #2a5298);
+background: linear-gradient(to right, #141e30, #243b55);
 color: white;
 }
 h1, h2, h3 {
-color: white;
+color: #ffffff;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -31,26 +32,27 @@ color: white;
 # ===============================
 # HEADER
 # ===============================
-st.title("💼 Insurance Claim Prediction Dashboard")
-st.write("🔍 Predict insurance claim approval using Machine Learning")
+st.title("🚀 Insurance Claim AI Dashboard")
+st.write("Advanced ML System for Claim Approval Prediction")
 
 st.divider()
 
 # ===============================
 # KPI CARDS
 # ===============================
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 
-col1.metric("👥 Total Users", "5000")
-col2.metric("📊 Model Accuracy", "90%+")
-col3.metric("⚡ System Status", "Active")
+col1.metric("👥 Users", "5000+")
+col2.metric("📊 Accuracy", "90%+")
+col3.metric("⚡ Status", "Active")
+col4.metric("🤖 Model", "Random Forest")
 
 st.divider()
 
 # ===============================
 # SIDEBAR INPUT
 # ===============================
-st.sidebar.header("📝 Enter User Details")
+st.sidebar.header("📝 User Details")
 
 age = st.sidebar.slider("Age", 18, 70, 30)
 gender = st.sidebar.selectbox("Gender", ["Male", "Female"])
@@ -74,13 +76,30 @@ features = np.array([[age, gender, insurance, policy, claim_amount, income, medi
 features = scaler.transform(features)
 
 # ===============================
-# PREDICTION SECTION
+# SESSION STATE (history)
 # ===============================
-st.subheader("🔎 Prediction Result")
+if "history" not in st.session_state:
+    st.session_state.history = []
 
-if st.button("🚀 Predict Claim Status"):
+# ===============================
+# PREDICTION
+# ===============================
+st.subheader("🔎 Prediction")
+
+if st.button("🚀 Predict Now"):
     result = model.predict(features)[0]
     prob = model.predict_proba(features)[0][1]
+
+    status = "Approved" if result == 1 else "Rejected"
+
+    # Save history
+    st.session_state.history.append({
+        "Age": age,
+        "Insurance": insurance,
+        "Amount": claim_amount,
+        "Result": status,
+        "Probability": round(prob, 2)
+    })
 
     col1, col2 = st.columns(2)
 
@@ -93,8 +112,40 @@ if st.button("🚀 Predict Claim Status"):
 
     st.progress(float(prob))
 
+st.divider()
+
+# ===============================
+# ANALYTICS DASHBOARD
+# ===============================
+st.subheader("📊 Analytics Dashboard")
+
+if len(st.session_state.history) > 0:
+    df = pd.DataFrame(st.session_state.history)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.write("### Prediction Distribution")
+        st.bar_chart(df["Result"].value_counts())
+
+    with col2:
+        st.write("### Insurance Type Analysis")
+        st.bar_chart(df["Insurance"].value_counts())
+
+st.divider()
+
+# ===============================
+# HISTORY TABLE
+# ===============================
+st.subheader("📋 Prediction History")
+
+if len(st.session_state.history) > 0:
+    st.dataframe(pd.DataFrame(st.session_state.history))
+else:
+    st.write("No predictions yet")
+
 # ===============================
 # FOOTER
 # ===============================
 st.markdown("---")
-st.write("🚀 Built with Machine Learning | Professional Project | Ready for LinkedIn")
+st.write("🚀 Ultimate ML Project | Built for LinkedIn Portfolio")

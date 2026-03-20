@@ -14,7 +14,7 @@ scaler = joblib.load("scaler.pkl")
 st.set_page_config(page_title="AI Insurance Claim", layout="wide")
 
 # ===============================
-# CLEAN UI (WHITE + BLACK TEXT)
+# CLEAN UI
 # ===============================
 st.markdown("""
 <style>
@@ -49,7 +49,7 @@ with col2:
 st.divider()
 
 # ===============================
-# HERO SECTION (TEXT + YOUR IMAGE)
+# HERO SECTION (SAFE IMAGE)
 # ===============================
 col1, col2 = st.columns([2,1])
 
@@ -59,7 +59,13 @@ with col1:
     st.write("Professional ML-based insurance approval system")
 
 with col2:
-    st.image("your_image.jpg", use_column_width=True)  # 👈 put your image here
+    try:
+        st.image("your_image.jpg", use_column_width=True)
+    except:
+        st.image(
+            "https://images.unsplash.com/photo-1605902711622-cfb43c44367f",
+            use_column_width=True
+        )
 
 st.divider()
 

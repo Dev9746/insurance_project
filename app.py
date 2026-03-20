@@ -14,7 +14,7 @@ scaler = joblib.load("scaler.pkl")
 st.set_page_config(page_title="AI Insurance Claim", layout="wide")
 
 # ===============================
-# STYLE (WHITE + BLACK TEXT)
+# CLEAN UI (WHITE + BLACK TEXT)
 # ===============================
 st.markdown("""
 <style>
@@ -22,7 +22,7 @@ st.markdown("""
     background-color: #f5f5f5;
 }
 
-h1, h2, h3, p, label {
+h1, h2, h3, h4, p, label {
     color: black !important;
 }
 
@@ -32,7 +32,6 @@ h1, h2, h3, p, label {
     border-radius: 8px;
     font-weight: bold;
 }
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -50,17 +49,17 @@ with col2:
 st.divider()
 
 # ===============================
-# HERO SECTION (TEXT + IMAGE)
+# HERO SECTION (TEXT + YOUR IMAGE)
 # ===============================
 col1, col2 = st.columns([2,1])
 
 with col1:
     st.markdown("### Smart Insurance Prediction System")
     st.write("AI powered system to predict claim approval instantly")
-    st.write("Trusted by intelligent ML models")
+    st.write("Professional ML-based insurance approval system")
 
 with col2:
-st.image("https://images.unsplash.com/photo-1605902711622-cfb43c44367f")
+    st.image("your_image.jpg", use_column_width=True)  # 👈 put your image here
 
 st.divider()
 
@@ -158,8 +157,23 @@ if st.button("🚀 View Prediction"):
 
         st.progress(float(prob))
 
-    except:
-        st.error("⚠️ Model mismatch! Retrain model.")
+    except Exception as e:
+        st.error("⚠️ Model mismatch! Please retrain model.")
+
+st.divider()
+
+# ===============================
+# EXTRA SECTION
+# ===============================
+st.subheader("What Would You Like to Protect Today?")
+
+col1, col2, col3, col4, col5 = st.columns(5)
+
+col1.info("🚗 Car Insurance")
+col2.info("🏍️ Bike Insurance")
+col3.info("🏥 Health Insurance")
+col4.info("🏢 Business Insurance")
+col5.info("✈️ Travel Insurance")
 
 # ===============================
 # FOOTER

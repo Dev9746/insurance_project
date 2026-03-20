@@ -48,11 +48,12 @@ with col2:
 
 st.divider()
 
-# ===============================
-# HERO SECTION (SAFE IMAGE)
-# ===============================
 
-col1, col2 = st.columns([3,1])  # 👈 left side bigger, right side smaller
+
+# ===============================
+# HERO SECTION (CENTER IMAGE)
+# ===============================
+col1, col2, col3 = st.columns([1.5,2,1])
 
 with col1:
     st.markdown("### Smart Insurance Prediction System")
@@ -61,9 +62,12 @@ with col1:
 
 with col2:
     try:
-        st.image("your_image.jpg", width=250)  # 👈 size control
+        st.image("your_image.jpg", width=300)
     except:
-        st.image("https://i.imgur.com/8Km9tLL.jpg", width=250)
+        st.image("https://i.imgur.com/8Km9tLL.jpg", width=300)
+
+with col3:
+    st.empty()  # spacing
 # ===============================
 # INSURANCE TYPE
 # ===============================

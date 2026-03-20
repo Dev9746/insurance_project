@@ -14,7 +14,7 @@ scaler = joblib.load("scaler.pkl")
 st.set_page_config(page_title="AI Insurance Claim", layout="wide")
 
 # ===============================
-# CLEAN UI
+# UI STYLE
 # ===============================
 st.markdown("""
 <style>
@@ -48,9 +48,10 @@ with col2:
     st.button("Login")
     st.markdown("</div>", unsafe_allow_html=True)
 
+st.divider()
 
 # ===============================
-# HERO SECTION (CENTER IMAGE)
+# HERO
 # ===============================
 col1, col2 = st.columns([2.5,1])
 
@@ -60,45 +61,17 @@ with col1:
     st.write("Professional ML-based insurance approval system")
 
 with col2:
-    st.markdown("<div style='margin-top:-50px;'>", unsafe_allow_html=True)  # 👈 move UP
+    st.markdown("<div style='margin-top:-50px;'>", unsafe_allow_html=True)
     try:
         st.image("your_image.jpg", width=260)
     except:
         st.image("https://i.imgur.com/8Km9tLL.jpg", width=260)
-    st.markdown("</div>", unsafe_allow_html=True)  # spacing
-# ===============================
-# INSURANCE TYPE
-# ===============================
-st.subheader("Select Insurance Type")
-
-col1, col2, col3, col4, col5 = st.columns(5)
-
-insurance = "Car"
-
-with col1:
-    if st.button("🚗 Car"):
-        insurance = "Car"
-
-with col2:
-    if st.button("🏍️ Bike"):
-        insurance = "Bike"
-
-with col3:
-    if st.button("🏥 Health"):
-        insurance = "Health"
-
-with col4:
-    if st.button("🏢 Commercial"):
-        insurance = "Commercial"
-
-with col5:
-    if st.button("✈️ Travel"):
-        insurance = "Travel"
+    st.markdown("</div>", unsafe_allow_html=True)
 
 st.divider()
 
 # ===============================
-# FORM
+# INPUT FORM (MATCH TRAINING)
 # ===============================
 st.subheader("Enter Details")
 
@@ -120,22 +93,15 @@ fraud = st.selectbox("Fraud Flag", [0,1])
 st.divider()
 
 # ===============================
-# ENCODING
+# ENCODING (MATCH TRAINING)
 # ===============================
 gender = 1 if gender == "Male" else 0
 policy = {"Basic":0,"Premium":1,"Gold":2}[policy]
 medical = {"Good":0,"Average":1,"Poor":2}[medical]
 
-insurance_map = {
-    "Car": 0,
-    "Bike": 1,
-    "Health": 2,
-    "Life": 3,
-    "Travel": 4,
-    "Commercial": 0
-}
+# ❌ REMOVE insurance_type (IMPORTANT)
 
-insurance_val = insurance_map.get(insurance, 0)
+features = np.array([[age, gender, policy, claim_amount, income, medical, claim_history, fraud]])
 
 # ===============================
 # PREDICTION
@@ -143,11 +109,10 @@ insurance_val = insurance_map.get(insurance, 0)
 if st.button("🚀 View Prediction"):
 
     try:
-        features = np.array([[age, gender, insurance_val, policy, claim_amount, income, medical, claim_history, fraud]])
-        features = scaler.transform(features)
+        features_scaled = scaler.transform(features)
 
-        result = model.predict(features)[0]
-        prob = model.predict_proba(features)[0][1]
+        result = model.predict(features_scaled)[0]
+        prob = model.predict_proba(features_scaled)[0][1]
 
         col1, col2 = st.columns(2)
 
@@ -161,25 +126,12 @@ if st.button("🚀 View Prediction"):
         st.progress(float(prob))
 
     except Exception as e:
-        st.error("⚠️ Model mismatch! Please retrain model.")
+        st.error("⚠️ Model mismatch! Retrain model.")
 
 st.divider()
-
-# ===============================
-# EXTRA SECTION
-# ===============================
-st.subheader("What Would You Like to Protect Today?")
-
-col1, col2, col3, col4, col5 = st.columns(5)
-
-col1.info("🚗 Car Insurance")
-col2.info("🏍️ Bike Insurance")
-col3.info("🏥 Health Insurance")
-col4.info("🏢 Business Insurance")
-col5.info("✈️ Travel Insurance")
 
 # ===============================
 # FOOTER
 # ===============================
 st.markdown("---")
-st.write("🚀 AI Based Insurance Claim System | Final Year Project")
+st.write("🚀 AI Based Insurance Claim System")

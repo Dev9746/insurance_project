@@ -60,7 +60,7 @@ with col1:
     st.write("Trusted by intelligent ML models")
 
 with col2:
-    st.image("https://images.unsplash.com/photo-1605902711622-cfb43c44367f")
+st.image("https://images.unsplash.com/photo-1605902711622-cfb43c44367f")
 
 st.divider()
 

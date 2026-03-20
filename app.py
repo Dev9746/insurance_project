@@ -14,43 +14,38 @@ scaler = joblib.load("scaler.pkl")
 st.set_page_config(page_title="Digit Insurance AI", layout="wide")
 
 # ===============================
-# SOLID UI (NO TRANSPARENT)
+# FINAL CLEAN UI (BLACK TEXT + WHITE BG)
 # ===============================
 st.markdown("""
 <style>
 
-/* Full page */
+/* Main Background */
 [data-testid="stAppViewContainer"] {
-    background-color: #f4f4f4;
+    background-color: #f5f5f5;
 }
 
-/* Header */
-.header {
-    background:white;
-    padding:15px;
-    border-radius:10px;
+/* ALL TEXT BLACK */
+h1, h2, h3, h4, h5, h6, p, span, label, div {
+    color: black !important;
 }
 
-/* Cards */
-.card {
-    background:white;
-    padding:15px;
-    border-radius:12px;
-    text-align:center;
-    box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background-color: #ffffff;
+    color: black;
 }
 
 /* Buttons */
 .stButton>button {
-    background-color:#ffcc00;
-    color:black;
-    border-radius:8px;
-    font-weight:bold;
+    background-color: #ffcc00;
+    color: black;
+    border-radius: 8px;
+    font-weight: bold;
 }
 
 /* Inputs */
-input, .stSelectbox, .stNumberInput {
-    background:white !important;
+input, textarea {
+    color: black !important;
 }
 
 </style>
@@ -62,7 +57,7 @@ input, .stSelectbox, .stNumberInput {
 col1, col2 = st.columns([6,1])
 
 with col1:
-    st.markdown("## digit")
+    st.markdown("## digit insurance")
 
 with col2:
     st.button("Login")
@@ -73,13 +68,12 @@ st.divider()
 # HERO SECTION
 # ===============================
 st.markdown("### Do the Digit Insurance")
-
 st.write("Trusted by 7 Crore+ Indians")
 
 st.divider()
 
 # ===============================
-# INSURANCE CARDS (TOP)
+# INSURANCE TYPE CARDS
 # ===============================
 st.subheader("Select Insurance")
 
@@ -110,7 +104,7 @@ with col5:
 st.divider()
 
 # ===============================
-# INPUT FORM (LIKE DIGIT)
+# INPUT FORM
 # ===============================
 st.subheader("Enter Details")
 
@@ -143,13 +137,14 @@ insurance_map = {
     "Bike": 1,
     "Health": 2,
     "Life": 3,
-    "Travel": 4
+    "Travel": 4,
+    "Commercial": 0
 }
 
 insurance_val = insurance_map.get(insurance, 0)
 
 # ===============================
-# PREDICTION BUTTON
+# PREDICTION
 # ===============================
 if st.button("View Prices 🚀"):
 
@@ -171,13 +166,13 @@ if st.button("View Prices 🚀"):
 
         st.progress(float(prob))
 
-    except:
-        st.error("⚠️ Model mismatch! Retrain model.")
+    except Exception as e:
+        st.error("⚠️ Model mismatch! Please retrain model.")
 
 st.divider()
 
 # ===============================
-# EXTRA SECTION (LIKE DIGIT GRID)
+# EXTRA SECTION
 # ===============================
 st.subheader("What Would You Like to Protect Today?")
 

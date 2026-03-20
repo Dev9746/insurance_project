@@ -1,7 +1,6 @@
 import streamlit as st
 import numpy as np
 import joblib
-import pandas as pd
 
 # ===============================
 # LOAD MODEL
@@ -15,37 +14,59 @@ scaler = joblib.load("scaler.pkl")
 st.set_page_config(page_title="Insurance AI Platform", layout="wide")
 
 # ===============================
-# STYLE
+# YELLOW DIGIT STYLE UI
 # ===============================
 st.markdown("""
 <style>
+
+/* Main Background */
 [data-testid="stAppViewContainer"] {
-background: linear-gradient(to right, #141e30, #243b55);
-color: white;
+    background: linear-gradient(to right, #fff200, #ffd000);
 }
-h1, h2, h3, p {
-color: white;
-text-align: center;
+
+/* Text */
+h1, h2, h3, p, label {
+    color: black !important;
 }
+
+/* Buttons */
+.stButton>button {
+    background-color: black;
+    color: white;
+    border-radius: 10px;
+    height: 3em;
+    width: 100%;
+}
+
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background-color: #fff8c6;
+}
+
+/* Cards spacing */
+.block-container {
+    padding-top: 2rem;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
 # ===============================
 # HEADER
 # ===============================
-st.title("🚀 Insurance AI Platform")
-st.write("Get instant insurance claim prediction")
+st.markdown("<h1 style='text-align:center;'>🚀 Insurance AI Platform</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center;'>Get instant claim approval prediction</p>", unsafe_allow_html=True)
 
 st.divider()
 
 # ===============================
 # INSURANCE TYPE CARDS
 # ===============================
-st.subheader("🛡️ Choose Insurance Type")
+st.subheader("🛡️ Select Insurance Type")
 
 col1, col2, col3, col4, col5 = st.columns(5)
 
-insurance = "Car"  # default
+insurance = "Car"
 
 with col1:
     if st.button("🚗 Car"):
@@ -120,20 +141,22 @@ if st.button("🚀 View Prediction"):
         result = model.predict(features)[0]
         prob = model.predict_proba(features)[0][1]
 
+        col1, col2 = st.columns(2)
+
         if result == 1:
-            st.success(f"✅ Claim Approved (Probability: {prob:.2f})")
+            col1.success("✅ Claim Approved")
         else:
-            st.error(f"❌ Claim Rejected (Probability: {prob:.2f})")
+            col1.error("❌ Claim Rejected")
+
+        col2.metric("Approval Probability", f"{prob:.2f}")
 
         st.progress(float(prob))
 
-    except Exception as e:
-        st.error("⚠️ Model mismatch error! Please retrain model.")
-
-st.divider()
+    except:
+        st.error("⚠️ Feature mismatch! Please retrain model.")
 
 # ===============================
 # FOOTER
 # ===============================
 st.markdown("---")
-st.write("🚀 Built with Machine Learning | Inspired by InsurTech Platforms")
+st.markdown("<p style='text-align:center;'>🚀 Built with Machine Learning | Digit Style UI</p>", unsafe_allow_html=True)

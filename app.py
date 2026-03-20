@@ -72,9 +72,6 @@ policy = {"Basic":0,"Premium":1,"Gold":2}[policy]
 medical = {"Good":0,"Average":1,"Poor":2}[medical]
 insurance = {"Car":0,"Bike":1,"Health":2,"Life":3,"Travel":4}[insurance]
 
-features = np.array([[age, gender, insurance, policy, claim_amount, income, medical, claim_history, fraud]])
-features = scaler.transform(features)
-
 # ===============================
 # SESSION STATE (history)
 # ===============================
@@ -87,6 +84,11 @@ if "history" not in st.session_state:
 st.subheader("🔎 Prediction")
 
 if st.button("🚀 Predict Now"):
+
+    # 👇 IMPORTANT: transform INSIDE button
+    features = np.array([[age, gender, insurance, policy, claim_amount, income, medical, claim_history, fraud]])
+    features = scaler.transform(features)
+
     result = model.predict(features)[0]
     prob = model.predict_proba(features)[0][1]
 

@@ -11,44 +11,46 @@ scaler = joblib.load("scaler.pkl")
 # ===============================
 # PAGE CONFIG
 # ===============================
-st.set_page_config(page_title="Digit Style Insurance", layout="wide")
+st.set_page_config(page_title="Digit Insurance AI", layout="wide")
 
 # ===============================
-# CSS (DIGIT STYLE)
+# SOLID UI (NO TRANSPARENT)
 # ===============================
 st.markdown("""
 <style>
 
-/* Background */
+/* Full page */
 [data-testid="stAppViewContainer"] {
-    background-color: #f5f5f5;
+    background-color: #f4f4f4;
 }
 
 /* Header */
 .header {
-    display:flex;
-    justify-content: space-between;
-    align-items:center;
-    padding: 10px 20px;
     background:white;
+    padding:15px;
     border-radius:10px;
 }
 
 /* Cards */
 .card {
     background:white;
-    padding:20px;
-    border-radius:15px;
+    padding:15px;
+    border-radius:12px;
     text-align:center;
-    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
 }
 
 /* Buttons */
 .stButton>button {
     background-color:#ffcc00;
     color:black;
-    border-radius:10px;
+    border-radius:8px;
     font-weight:bold;
+}
+
+/* Inputs */
+input, .stSelectbox, .stNumberInput {
+    background:white !important;
 }
 
 </style>
@@ -60,7 +62,7 @@ st.markdown("""
 col1, col2 = st.columns([6,1])
 
 with col1:
-    st.markdown("<h2>digit insurance</h2>", unsafe_allow_html=True)
+    st.markdown("## digit")
 
 with col2:
     st.button("Login")
@@ -68,16 +70,18 @@ with col2:
 st.divider()
 
 # ===============================
-# TITLE
+# HERO SECTION
 # ===============================
-st.markdown("<h1 style='text-align:center;'>Do the Digit Insurance</h1>", unsafe_allow_html=True)
+st.markdown("### Do the Digit Insurance")
+
+st.write("Trusted by 7 Crore+ Indians")
 
 st.divider()
 
 # ===============================
-# INSURANCE CARDS
+# INSURANCE CARDS (TOP)
 # ===============================
-st.subheader("Choose Insurance")
+st.subheader("Select Insurance")
 
 col1, col2, col3, col4, col5 = st.columns(5)
 
@@ -96,8 +100,8 @@ with col3:
         insurance = "Health"
 
 with col4:
-    if st.button("❤️ Life"):
-        insurance = "Life"
+    if st.button("🏢 Commercial"):
+        insurance = "Commercial"
 
 with col5:
     if st.button("✈️ Travel"):
@@ -106,7 +110,7 @@ with col5:
 st.divider()
 
 # ===============================
-# FORM
+# INPUT FORM (LIKE DIGIT)
 # ===============================
 st.subheader("Enter Details")
 
@@ -133,11 +137,19 @@ st.divider()
 gender = 1 if gender == "Male" else 0
 policy = {"Basic":0,"Premium":1,"Gold":2}[policy]
 medical = {"Good":0,"Average":1,"Poor":2}[medical]
-insurance_map = {"Car":0,"Bike":1,"Health":2,"Life":3,"Travel":4}
-insurance_val = insurance_map[insurance]
+
+insurance_map = {
+    "Car": 0,
+    "Bike": 1,
+    "Health": 2,
+    "Life": 3,
+    "Travel": 4
+}
+
+insurance_val = insurance_map.get(insurance, 0)
 
 # ===============================
-# PREDICTION
+# PREDICTION BUTTON
 # ===============================
 if st.button("View Prices 🚀"):
 
@@ -148,18 +160,37 @@ if st.button("View Prices 🚀"):
         result = model.predict(features)[0]
         prob = model.predict_proba(features)[0][1]
 
+        col1, col2 = st.columns(2)
+
         if result == 1:
-            st.success(f"✅ Claim Approved ({prob:.2f})")
+            col1.success("✅ Claim Approved")
         else:
-            st.error(f"❌ Claim Rejected ({prob:.2f})")
+            col1.error("❌ Claim Rejected")
+
+        col2.metric("Approval Probability", f"{prob:.2f}")
 
         st.progress(float(prob))
 
     except:
         st.error("⚠️ Model mismatch! Retrain model.")
 
+st.divider()
+
+# ===============================
+# EXTRA SECTION (LIKE DIGIT GRID)
+# ===============================
+st.subheader("What Would You Like to Protect Today?")
+
+col1, col2, col3, col4, col5 = st.columns(5)
+
+col1.info("🚗 Car Insurance")
+col2.info("🏍️ Bike Insurance")
+col3.info("🏥 Health Insurance")
+col4.info("🏢 Business Insurance")
+col5.info("✈️ Travel Insurance")
+
 # ===============================
 # FOOTER
 # ===============================
 st.markdown("---")
-st.write("© 2026 Insurance AI Platform")
+st.write("© 2026 Digit AI Insurance Clone")

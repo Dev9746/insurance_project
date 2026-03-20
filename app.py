@@ -11,41 +11,44 @@ scaler = joblib.load("scaler.pkl")
 # ===============================
 # PAGE CONFIG
 # ===============================
-st.set_page_config(page_title="Insurance AI Platform", layout="wide")
+st.set_page_config(page_title="Digit Style Insurance", layout="wide")
 
 # ===============================
-# YELLOW DIGIT STYLE UI
+# CSS (DIGIT STYLE)
 # ===============================
 st.markdown("""
 <style>
 
-/* Main Background */
+/* Background */
 [data-testid="stAppViewContainer"] {
-    background: linear-gradient(to right, #fff200, #ffd000);
+    background-color: #f5f5f5;
 }
 
-/* Text */
-h1, h2, h3, p, label {
-    color: black !important;
+/* Header */
+.header {
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    padding: 10px 20px;
+    background:white;
+    border-radius:10px;
+}
+
+/* Cards */
+.card {
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    text-align:center;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
 }
 
 /* Buttons */
 .stButton>button {
-    background-color: black;
-    color: white;
-    border-radius: 10px;
-    height: 3em;
-    width: 100%;
-}
-
-/* Sidebar */
-[data-testid="stSidebar"] {
-    background-color: #fff8c6;
-}
-
-/* Cards spacing */
-.block-container {
-    padding-top: 2rem;
+    background-color:#ffcc00;
+    color:black;
+    border-radius:10px;
+    font-weight:bold;
 }
 
 </style>
@@ -54,15 +57,27 @@ h1, h2, h3, p, label {
 # ===============================
 # HEADER
 # ===============================
-st.markdown("<h1 style='text-align:center;'>🚀 Insurance AI Platform</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center;'>Get instant claim approval prediction</p>", unsafe_allow_html=True)
+col1, col2 = st.columns([6,1])
+
+with col1:
+    st.markdown("<h2>digit insurance</h2>", unsafe_allow_html=True)
+
+with col2:
+    st.button("Login")
 
 st.divider()
 
 # ===============================
-# INSURANCE TYPE CARDS
+# TITLE
 # ===============================
-st.subheader("🛡️ Select Insurance Type")
+st.markdown("<h1 style='text-align:center;'>Do the Digit Insurance</h1>", unsafe_allow_html=True)
+
+st.divider()
+
+# ===============================
+# INSURANCE CARDS
+# ===============================
+st.subheader("Choose Insurance")
 
 col1, col2, col3, col4, col5 = st.columns(5)
 
@@ -91,9 +106,9 @@ with col5:
 st.divider()
 
 # ===============================
-# INPUT FORM
+# FORM
 # ===============================
-st.subheader("📋 Enter Details")
+st.subheader("Enter Details")
 
 col1, col2 = st.columns(2)
 
@@ -108,7 +123,7 @@ with col2:
     medical = st.selectbox("Medical History", ["Good", "Average", "Poor"])
 
 claim_history = st.slider("Previous Claims", 0, 5, 1)
-fraud = st.selectbox("Fraud Flag", [0, 1])
+fraud = st.selectbox("Fraud Flag", [0,1])
 
 st.divider()
 
@@ -116,23 +131,15 @@ st.divider()
 # ENCODING
 # ===============================
 gender = 1 if gender == "Male" else 0
-policy = {"Basic": 0, "Premium": 1, "Gold": 2}[policy]
-medical = {"Good": 0, "Average": 1, "Poor": 2}[medical]
-
-insurance_map = {
-    "Car": 0,
-    "Bike": 1,
-    "Health": 2,
-    "Life": 3,
-    "Travel": 4
-}
-
+policy = {"Basic":0,"Premium":1,"Gold":2}[policy]
+medical = {"Good":0,"Average":1,"Poor":2}[medical]
+insurance_map = {"Car":0,"Bike":1,"Health":2,"Life":3,"Travel":4}
 insurance_val = insurance_map[insurance]
 
 # ===============================
 # PREDICTION
 # ===============================
-if st.button("🚀 View Prediction"):
+if st.button("View Prices 🚀"):
 
     try:
         features = np.array([[age, gender, insurance_val, policy, claim_amount, income, medical, claim_history, fraud]])
@@ -141,22 +148,18 @@ if st.button("🚀 View Prediction"):
         result = model.predict(features)[0]
         prob = model.predict_proba(features)[0][1]
 
-        col1, col2 = st.columns(2)
-
         if result == 1:
-            col1.success("✅ Claim Approved")
+            st.success(f"✅ Claim Approved ({prob:.2f})")
         else:
-            col1.error("❌ Claim Rejected")
-
-        col2.metric("Approval Probability", f"{prob:.2f}")
+            st.error(f"❌ Claim Rejected ({prob:.2f})")
 
         st.progress(float(prob))
 
     except:
-        st.error("⚠️ Feature mismatch! Please retrain model.")
+        st.error("⚠️ Model mismatch! Retrain model.")
 
 # ===============================
 # FOOTER
 # ===============================
 st.markdown("---")
-st.markdown("<p style='text-align:center;'>🚀 Built with Machine Learning | Digit Style UI</p>", unsafe_allow_html=True)
+st.write("© 2026 Insurance AI Platform")

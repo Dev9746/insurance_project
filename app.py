@@ -12,7 +12,7 @@ scaler = joblib.load("scaler.pkl")
 # ===============================
 # PAGE CONFIG
 # ===============================
-st.set_page_config(page_title="Insurance AI Dashboard", layout="wide") 
+st.set_page_config(page_title="Insurance AI Platform", layout="wide")
 
 # ===============================
 # STYLE
@@ -20,11 +20,12 @@ st.set_page_config(page_title="Insurance AI Dashboard", layout="wide")
 st.markdown("""
 <style>
 [data-testid="stAppViewContainer"] {
-background: linear-gradient(to right, #141e30, #243b55); 
+background: linear-gradient(to right, #141e30, #243b55);
 color: white;
 }
-h1, h2, h3 {
-color: #ffffff;
+h1, h2, h3, p {
+color: white;
+text-align: center;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -32,122 +33,107 @@ color: #ffffff;
 # ===============================
 # HEADER
 # ===============================
-st.title("🚀 Insurance Claim AI Dashboard")
-st.write("Advanced ML System for Claim Approval Prediction")
+st.title("🚀 Insurance AI Platform")
+st.write("Get instant insurance claim prediction")
 
 st.divider()
 
 # ===============================
-# KPI CARDS
+# INSURANCE TYPE CARDS
 # ===============================
-col1, col2, col3, col4 = st.columns(4)
+st.subheader("🛡️ Choose Insurance Type")
 
-col1.metric("👥 Users", "5000+")
-col2.metric("📊 Accuracy", "90%+")
-col3.metric("⚡ Status", "Active")
-col4.metric("🤖 Model", "Random Forest")
+col1, col2, col3, col4, col5 = st.columns(5)
+
+insurance = "Car"  # default
+
+with col1:
+    if st.button("🚗 Car"):
+        insurance = "Car"
+
+with col2:
+    if st.button("🏍️ Bike"):
+        insurance = "Bike"
+
+with col3:
+    if st.button("🏥 Health"):
+        insurance = "Health"
+
+with col4:
+    if st.button("❤️ Life"):
+        insurance = "Life"
+
+with col5:
+    if st.button("✈️ Travel"):
+        insurance = "Travel"
 
 st.divider()
 
 # ===============================
-# SIDEBAR INPUT
+# INPUT FORM
 # ===============================
-st.sidebar.header("📝 User Details")
+st.subheader("📋 Enter Details")
 
-age = st.sidebar.slider("Age", 18, 70, 30)
-gender = st.sidebar.selectbox("Gender", ["Male", "Female"])
-insurance = st.sidebar.selectbox("Insurance Type", ["Car", "Bike", "Health", "Life", "Travel"])
-policy = st.sidebar.selectbox("Policy Type", ["Basic", "Premium", "Gold"])
-claim_amount = st.sidebar.number_input("Claim Amount", value=20000)
-income = st.sidebar.number_input("Income", value=50000)
-medical = st.sidebar.selectbox("Medical History", ["Good", "Average", "Poor"])
-claim_history = st.sidebar.slider("Previous Claims", 0, 5, 1)
-fraud = st.sidebar.selectbox("Fraud Flag", [0, 1])
+col1, col2 = st.columns(2)
+
+with col1:
+    age = st.slider("Age", 18, 70, 30)
+    claim_amount = st.number_input("Claim Amount", value=20000)
+    income = st.number_input("Income", value=50000)
+
+with col2:
+    gender = st.selectbox("Gender", ["Male", "Female"])
+    policy = st.selectbox("Policy Type", ["Basic", "Premium", "Gold"])
+    medical = st.selectbox("Medical History", ["Good", "Average", "Poor"])
+
+claim_history = st.slider("Previous Claims", 0, 5, 1)
+fraud = st.selectbox("Fraud Flag", [0, 1])
+
+st.divider()
 
 # ===============================
 # ENCODING
 # ===============================
 gender = 1 if gender == "Male" else 0
-policy = {"Basic":0,"Premium":1,"Gold":2}[policy]
-medical = {"Good":0,"Average":1,"Poor":2}[medical]
-insurance = {"Car":0,"Bike":1,"Health":2,"Life":3,"Travel":4}[insurance]
+policy = {"Basic": 0, "Premium": 1, "Gold": 2}[policy]
+medical = {"Good": 0, "Average": 1, "Poor": 2}[medical]
 
-# ===============================
-# SESSION STATE (history)
-# ===============================
-if "history" not in st.session_state:
-    st.session_state.history = []
+insurance_map = {
+    "Car": 0,
+    "Bike": 1,
+    "Health": 2,
+    "Life": 3,
+    "Travel": 4
+}
+
+insurance_val = insurance_map[insurance]
 
 # ===============================
 # PREDICTION
 # ===============================
-st.subheader("🔎 Prediction")
+if st.button("🚀 View Prediction"):
 
-if st.button("🚀 Predict Now"):
+    try:
+        features = np.array([[age, gender, insurance_val, policy, claim_amount, income, medical, claim_history, fraud]])
+        features = scaler.transform(features)
 
-    # 👇 IMPORTANT: transform INSIDE button
-    features = np.array([[age, gender, insurance, policy, claim_amount, income, medical, claim_history, fraud]])
-    features = scaler.transform(features)
+        result = model.predict(features)[0]
+        prob = model.predict_proba(features)[0][1]
 
-    result = model.predict(features)[0]
-    prob = model.predict_proba(features)[0][1]
+        if result == 1:
+            st.success(f"✅ Claim Approved (Probability: {prob:.2f})")
+        else:
+            st.error(f"❌ Claim Rejected (Probability: {prob:.2f})")
 
-    status = "Approved" if result == 1 else "Rejected"
+        st.progress(float(prob))
 
-    # Save history
-    st.session_state.history.append({
-        "Age": age,
-        "Insurance": insurance,
-        "Amount": claim_amount,
-        "Result": status,
-        "Probability": round(prob, 2)
-    })
-
-    col1, col2 = st.columns(2)
-
-    if result == 1:
-        col1.success("✅ Claim Approved")
-    else:
-        col1.error("❌ Claim Rejected")
-
-    col2.metric("Approval Probability", f"{prob:.2f}")
-
-    st.progress(float(prob))
+    except Exception as e:
+        st.error("⚠️ Model mismatch error! Please retrain model.")
 
 st.divider()
-
-# ===============================
-# ANALYTICS DASHBOARD
-# ===============================
-st.subheader("📊 Analytics Dashboard")
-
-if len(st.session_state.history) > 0:
-    df = pd.DataFrame(st.session_state.history)
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.write("### Prediction Distribution")
-        st.bar_chart(df["Result"].value_counts())
-
-    with col2:
-        st.write("### Insurance Type Analysis")
-        st.bar_chart(df["Insurance"].value_counts())
-
-st.divider()
-
-# ===============================
-# HISTORY TABLE
-# ===============================
-st.subheader("📋 Prediction History")
-
-if len(st.session_state.history) > 0:
-    st.dataframe(pd.DataFrame(st.session_state.history))
-else:
-    st.write("No predictions yet")
 
 # ===============================
 # FOOTER
 # ===============================
 st.markdown("---")
-st.write("🚀 Ultimate ML Project | Built for LinkedIn Portfolio")
+st.write("🚀 Built with Machine Learning | Inspired by InsurTech Platforms")

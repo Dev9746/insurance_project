@@ -53,7 +53,7 @@ st.divider()
 # ===============================
 # HERO SECTION (CENTER IMAGE)
 # ===============================
-col1, col2, col3 = st.columns([1.5,2,1])
+col1, col2 = st.columns([3,1])  # 👈 left side bigger, right side smaller
 
 with col1:
     st.markdown("### Smart Insurance Prediction System")
@@ -62,12 +62,9 @@ with col1:
 
 with col2:
     try:
-        st.image("your_image.jpg", width=300)
+        st.image("your_image.jpg", width=250)  # 👈 size control
     except:
-        st.image("https://i.imgur.com/8Km9tLL.jpg", width=300)
-
-with col3:
-    st.empty()  # spacing
+        st.image("https://i.imgur.com/8Km9tLL.jpg", width=250)  # spacing
 # ===============================
 # INSURANCE TYPE
 # ===============================

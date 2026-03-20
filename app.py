@@ -38,22 +38,21 @@ h1, h2, h3, h4, p, label {
 # ===============================
 # HEADER
 # ===============================
-col1, col2 = st.columns([6,1])
+col1, col2 = st.columns([8,1])
 
 with col1:
-    st.markdown("## 🤖 AI Based Insurance Claim")
+    st.markdown("<h2 style='margin-top:10px;'>🤖 AI Based Insurance Claim</h2>", unsafe_allow_html=True)
 
 with col2:
+    st.markdown("<div style='margin-top:15px;'>", unsafe_allow_html=True)
     st.button("Login")
-
-st.divider()
-
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
 # ===============================
 # HERO SECTION (CENTER IMAGE)
 # ===============================
-col1, col2 = st.columns([3,1])  # 👈 left side bigger, right side smaller
+col1, col2 = st.columns([2.5,1])
 
 with col1:
     st.markdown("### Smart Insurance Prediction System")
@@ -61,10 +60,12 @@ with col1:
     st.write("Professional ML-based insurance approval system")
 
 with col2:
+    st.markdown("<div style='margin-top:-50px;'>", unsafe_allow_html=True)  # 👈 move UP
     try:
-        st.image("your_image.jpg", width=250)  # 👈 size control
+        st.image("your_image.jpg", width=260)
     except:
-        st.image("https://i.imgur.com/8Km9tLL.jpg", width=250)  # spacing
+        st.image("https://i.imgur.com/8Km9tLL.jpg", width=260)
+    st.markdown("</div>", unsafe_allow_html=True)  # spacing
 # ===============================
 # INSURANCE TYPE
 # ===============================

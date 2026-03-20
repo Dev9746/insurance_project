@@ -11,41 +11,26 @@ scaler = joblib.load("scaler.pkl")
 # ===============================
 # PAGE CONFIG
 # ===============================
-st.set_page_config(page_title="Digit Insurance AI", layout="wide")
+st.set_page_config(page_title="AI Insurance Claim", layout="wide")
 
 # ===============================
-# FINAL CLEAN UI (BLACK TEXT + WHITE BG)
+# STYLE (WHITE + BLACK TEXT)
 # ===============================
 st.markdown("""
 <style>
-
-/* Main Background */
 [data-testid="stAppViewContainer"] {
     background-color: #f5f5f5;
 }
 
-/* ALL TEXT BLACK */
-h1, h2, h3, h4, h5, h6, p, span, label, div {
+h1, h2, h3, p, label {
     color: black !important;
 }
 
-/* Sidebar */
-[data-testid="stSidebar"] {
-    background-color: #ffffff;
-    color: black;
-}
-
-/* Buttons */
 .stButton>button {
     background-color: #ffcc00;
     color: black;
     border-radius: 8px;
     font-weight: bold;
-}
-
-/* Inputs */
-input, textarea {
-    color: black !important;
 }
 
 </style>
@@ -57,7 +42,7 @@ input, textarea {
 col1, col2 = st.columns([6,1])
 
 with col1:
-    st.markdown("## digit insurance")
+    st.markdown("## 🤖 AI Based Insurance Claim")
 
 with col2:
     st.button("Login")
@@ -65,17 +50,24 @@ with col2:
 st.divider()
 
 # ===============================
-# HERO SECTION
+# HERO SECTION (TEXT + IMAGE)
 # ===============================
-st.markdown("### Do the Digit Insurance")
-st.write("Trusted by 7 Crore+ Indians")
+col1, col2 = st.columns([2,1])
+
+with col1:
+    st.markdown("### Smart Insurance Prediction System")
+    st.write("AI powered system to predict claim approval instantly")
+    st.write("Trusted by intelligent ML models")
+
+with col2:
+    st.image("https://images.unsplash.com/photo-1605902711622-cfb43c44367f")
 
 st.divider()
 
 # ===============================
-# INSURANCE TYPE CARDS
+# INSURANCE TYPE
 # ===============================
-st.subheader("Select Insurance")
+st.subheader("Select Insurance Type")
 
 col1, col2, col3, col4, col5 = st.columns(5)
 
@@ -104,7 +96,7 @@ with col5:
 st.divider()
 
 # ===============================
-# INPUT FORM
+# FORM
 # ===============================
 st.subheader("Enter Details")
 
@@ -146,7 +138,7 @@ insurance_val = insurance_map.get(insurance, 0)
 # ===============================
 # PREDICTION
 # ===============================
-if st.button("View Prices 🚀"):
+if st.button("🚀 View Prediction"):
 
     try:
         features = np.array([[age, gender, insurance_val, policy, claim_amount, income, medical, claim_history, fraud]])
@@ -166,26 +158,11 @@ if st.button("View Prices 🚀"):
 
         st.progress(float(prob))
 
-    except Exception as e:
-        st.error("⚠️ Model mismatch! Please retrain model.")
-
-st.divider()
-
-# ===============================
-# EXTRA SECTION
-# ===============================
-st.subheader("What Would You Like to Protect Today?")
-
-col1, col2, col3, col4, col5 = st.columns(5)
-
-col1.info("🚗 Car Insurance")
-col2.info("🏍️ Bike Insurance")
-col3.info("🏥 Health Insurance")
-col4.info("🏢 Business Insurance")
-col5.info("✈️ Travel Insurance")
+    except:
+        st.error("⚠️ Model mismatch! Retrain model.")
 
 # ===============================
 # FOOTER
 # ===============================
 st.markdown("---")
-st.write("© 2026 Digit AI Insurance Clone")
+st.write("🚀 AI Based Insurance Claim System | Final Year Project")

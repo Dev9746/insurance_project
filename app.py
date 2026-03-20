@@ -20,7 +20,7 @@ st.set_page_config(page_title="Insurance AI Dashboard", layout="wide")
 st.markdown("""
 <style>
 [data-testid="stAppViewContainer"] {
-background: linear-gradient(to right, #141e30, #243b55);
+background: linear-gradient(to right, #141e30, #243b55); 
 color: white;
 }
 h1, h2, h3 {

@@ -12,7 +12,7 @@ scaler = joblib.load("scaler.pkl")
 # ===============================
 # PAGE CONFIG
 # ===============================
-st.set_page_config(page_title="Insurance AI Dashboard", layout="wide")
+st.set_page_config(page_title="Insurance AI Dashboard", layout="wide") 
 
 # ===============================
 # STYLE

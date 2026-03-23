@@ -2,7 +2,7 @@ import streamlit as st
 import numpy as np
 import joblib
 import shap
-import pandas as pd
+import matplotlib.pyplot as plt
 import smtplib
 
 # ===============================
@@ -24,7 +24,7 @@ st.markdown("""
 [data-testid="stAppViewContainer"] {
     background-color: #f5f5f5;
 }
-h1, h2, h3, p {
+h1, h2, h3, p, label {
     color: black !important;
 }
 .stButton>button {
@@ -40,27 +40,12 @@ h1, h2, h3, p {
 # HEADER
 # ===============================
 col1, col2 = st.columns([8,1])
+
 with col1:
-    st.markdown("## 🤖 AI Based Insurance Claim")
+    st.markdown("##  AI Based Insurance Claim")
+
 with col2:
     st.button("Login")
-
-st.divider()
-
-# ===============================
-# HERO
-# ===============================
-col1, col2 = st.columns([2.5,1])
-
-with col1:
-    st.markdown("### Smart Insurance Prediction System")
-    st.write("AI powered system to predict claim approval instantly")
-
-with col2:
-    try:
-        st.image("your_image.jpg", width=260)
-    except:
-        st.image("https://i.imgur.com/8Km9tLL.jpg", width=260)
 
 st.divider()
 
@@ -97,78 +82,71 @@ features_scaled = scaler.transform(features)
 # ===============================
 # PREDICTION
 # ===============================
-if st.button("🚀 View Prediction"):
+if st.button(" View Prediction"):
 
     result = model.predict(features_scaled)[0]
     prob = model.predict_proba(features_scaled)[0][1]
 
-    col1, col2 = st.columns(2)
-
     if result == 1:
-        col1.success("✅ Claim Approved")
+        st.success(" Claim Approved")
     else:
-        col1.error("❌ Claim Rejected")
+        st.error(" Claim Rejected")
 
-    col2.metric("Approval Probability", f"{prob*100:.1f}%")
-
+    st.metric("Approval Probability", f"{prob*100:.1f}%")
     st.progress(float(prob))
 
     # ===============================
-    # SHAP EXPLANATION
+    # SHAP EXPLAINABILITY
     # ===============================
-    st.subheader("🔍 Why this prediction?")
+    st.subheader(" AI Explanation (SHAP)")
 
     explainer = shap.Explainer(model)
     shap_values = explainer(features_scaled)
 
-    feature_names = [
-        "Age","Gender","Policy","Claim Amount",
-        "Income","Medical","Claim History","Fraud"
-    ]
+    fig, ax = plt.subplots()
+    shap.plots.waterfall(shap_values[0], show=False)
+    st.pyplot(fig)
 
-    shap_df = pd.DataFrame({
-        "Feature": feature_names,
-        "Impact": shap_values.values[0]
-    })
+    # ===============================
+    # FEATURE IMPORTANCE
+    # ===============================
+    st.subheader(" Feature Importance")
 
-    st.bar_chart(shap_df.set_index("Feature"))
+    importances = model.feature_importances_
+    feature_names = ["Age","Gender","Policy","Claim","Income","Medical","History","Fraud"]
+
+    fig2, ax2 = plt.subplots()
+    ax2.barh(feature_names, importances)
+    st.pyplot(fig2)
 
 # ===============================
-# CONTACT FORM (EMAIL ALERT)
+# EMAIL SYSTEM
 # ===============================
 st.divider()
-st.subheader("📩 Contact / Query")
+st.subheader(" Contact / Notify")
 
-name = st.text_input("Your Name")
-email = st.text_input("Your Email")
-message = st.text_area("Your Message")
+message = st.text_area("Write message (for notifications only)")
 
-if st.button("Send Message"):
-
+if st.button("Send Email"):
     try:
-        sender_email = "your_email@gmail.com"
-        password = "your_app_password"
+        sender_email = "devs72527@gmail.com"
+        receiver_email = "devs72527@gmail.com"
+        password = "YOUR_APP_PASSWORD"  #  replace this
 
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
         server.login(sender_email, password)
 
-        text = f"""
-        Name: {name}
-        Email: {email}
-        Message: {message}
-        """
-
-        server.sendmail(sender_email, sender_email, text)
+        server.sendmail(sender_email, receiver_email, message)
         server.quit()
 
-        st.success("✅ Message Sent Successfully!")
+        st.success(" Email Sent Successfully")
 
-    except:
-        st.error("❌ Email sending failed")
+    except Exception as e:
+        st.error(" Email Failed. Check App Password.")
 
 # ===============================
 # FOOTER
 # ===============================
 st.markdown("---")
-st.write("🚀 Ultimate AI Insurance System")
+st.write(" AI Insurance System with Explainable AI")

@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 import joblib
-import smtplib
+import requests
 
 # ===============================
 # LOAD MODEL
@@ -76,7 +76,7 @@ medical = {"Good":0,"Average":1,"Poor":2}[medical]
 
 features = np.array([[age, gender, policy, claim_amount, income, medical, claim_history, fraud]])
 
-# SAFE transform
+# SCALE
 try:
     features_scaled = scaler.transform(features)
 except:
@@ -88,15 +88,20 @@ except:
 # ===============================
 st.subheader("Prediction")
 
+prediction_text = ""
+prob = 0
+
 if st.button("🚀 View Prediction"):
 
     result = model.predict(features_scaled)[0]
     prob = model.predict_proba(features_scaled)[0][1]
 
     if result == 1:
-        st.success("✅ Claim Approved")
+        prediction_text = "✅ Claim Approved"
+        st.success(prediction_text)
     else:
-        st.error("❌ Claim Rejected")
+        prediction_text = "❌ Claim Rejected"
+        st.error(prediction_text)
 
     st.metric("Approval Probability", f"{prob*100:.1f}%")
     st.progress(float(prob))
@@ -114,7 +119,7 @@ if st.button("🚀 View Prediction"):
     st.pyplot(fig)
 
 # ===============================
-# EMAIL SYSTEM (SMART FIXED)
+# EMAIL SYSTEM (RESEND API)
 # ===============================
 st.divider()
 st.subheader("📩 Contact / Notify")
@@ -127,33 +132,36 @@ if st.button("Send Email"):
         st.warning("⚠️ Please enter message")
     else:
         try:
-            sender_email = "devs72527@gmail.com"
-            receiver_email = "devs72527@gmail.com"
+            api_key = st.secrets["RESEND_API_KEY"]
 
-            # 🔥 AUTO PASSWORD SYSTEM
-            try:
-                # Streamlit Cloud secret
-                password = st.secrets["password"]
-            except:
-                # Local fallback
-                password = "Omsha$9746$"   # 👈 replace with your App Password
+            url = "https://api.resend.com/emails"
 
-            server = smtplib.SMTP("smtp.gmail.com", 587)
-            server.starttls()
-            server.login(sender_email, password)
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            }
 
-            server.sendmail(
-                sender_email,
-                receiver_email,
-                f"Subject: Insurance App Message\n\n{message}"
-            )
+            data = {
+                "from": "onboarding@resend.dev",
+                "to": ["devs72527@gmail.com"],
+                "subject": "Insurance App Message",
+                "html": f"""
+                <h3>New Message from Insurance App</h3>
+                <p><b>Message:</b> {message}</p>
+                <p><b>Prediction:</b> {prediction_text}</p>
+                <p><b>Probability:</b> {prob:.2f}</p>
+                """
+            }
 
-            server.quit()
+            response = requests.post(url, headers=headers, json=data)
 
-            st.success("✅ Email Sent Successfully")
+            if response.status_code == 200:
+                st.success("✅ Email Sent Successfully 🚀")
+            else:
+                st.error("❌ Failed to send email")
 
         except Exception as e:
-            st.error("❌ Email Failed. Check App Password or secrets.")
+            st.error(f"Error: {e}")
 
 # ===============================
 # FOOTER

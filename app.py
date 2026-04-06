@@ -1,8 +1,6 @@
 import streamlit as st
 import numpy as np
 import joblib
-import shap
-import matplotlib.pyplot as plt
 import smtplib
 
 # ===============================
@@ -42,7 +40,7 @@ h1, h2, h3, p, label {
 col1, col2 = st.columns([8,1])
 
 with col1:
-    st.markdown("##  AI Based Insurance Claim")
+    st.markdown("## 🤖 AI Based Insurance Claim")
 
 with col2:
     st.button("Login")
@@ -77,76 +75,88 @@ policy = {"Basic":0,"Premium":1,"Gold":2}[policy]
 medical = {"Good":0,"Average":1,"Poor":2}[medical]
 
 features = np.array([[age, gender, policy, claim_amount, income, medical, claim_history, fraud]])
-features_scaled = scaler.transform(features)
+
+# SAFE transform
+try:
+    features_scaled = scaler.transform(features)
+except:
+    st.error("❌ Model mismatch! Retrain model.")
+    st.stop()
 
 # ===============================
 # PREDICTION
 # ===============================
-if st.button(" View Prediction"):
+st.subheader("Prediction")
+
+if st.button("🚀 View Prediction"):
 
     result = model.predict(features_scaled)[0]
     prob = model.predict_proba(features_scaled)[0][1]
 
     if result == 1:
-        st.success(" Claim Approved")
+        st.success("✅ Claim Approved")
     else:
-        st.error(" Claim Rejected")
+        st.error("❌ Claim Rejected")
 
     st.metric("Approval Probability", f"{prob*100:.1f}%")
     st.progress(float(prob))
 
-    # ===============================
-    # SHAP EXPLAINABILITY
-    # ===============================
-    st.subheader(" AI Explanation (SHAP)")
+    # Feature importance
+    st.subheader("📊 Feature Importance")
 
-    explainer = shap.Explainer(model)
-    shap_values = explainer(features_scaled)
-
-    fig, ax = plt.subplots()
-    shap.plots.waterfall(shap_values[0], show=False)
-    st.pyplot(fig)
-
-    # ===============================
-    # FEATURE IMPORTANCE
-    # ===============================
-    st.subheader(" Feature Importance")
+    import matplotlib.pyplot as plt
 
     importances = model.feature_importances_
-    feature_names = ["Age","Gender","Policy","Claim","Income","Medical","History","Fraud"]
+    names = ["Age","Gender","Policy","Claim","Income","Medical","History","Fraud"]
 
-    fig2, ax2 = plt.subplots()
-    ax2.barh(feature_names, importances)
-    st.pyplot(fig2)
+    fig, ax = plt.subplots()
+    ax.barh(names, importances)
+    st.pyplot(fig)
 
 # ===============================
-# EMAIL SYSTEM
+# EMAIL SYSTEM (SMART FIXED)
 # ===============================
 st.divider()
-st.subheader(" Contact / Notify")
+st.subheader("📩 Contact / Notify")
 
-message = st.text_area("Write message (for notifications only)")
+message = st.text_area("Write message")
 
 if st.button("Send Email"):
-    try:
-        sender_email = "devs72527@gmail.com"
-        receiver_email = "devs72527@gmail.com"
-        password = "YOUR_APP_PASSWORD"  #  replace this
 
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
-        server.login(sender_email, password)
+    if message.strip() == "":
+        st.warning("⚠️ Please enter message")
+    else:
+        try:
+            sender_email = "devs72527@gmail.com"
+            receiver_email = "devs72527@gmail.com"
 
-        server.sendmail(sender_email, receiver_email, message)
-        server.quit()
+            # 🔥 AUTO PASSWORD SYSTEM
+            try:
+                # Streamlit Cloud secret
+                password = st.secrets["password"]
+            except:
+                # Local fallback
+                password = "Omsha$9746$"   # 👈 replace with your App Password
 
-        st.success(" Email Sent Successfully")
+            server = smtplib.SMTP("smtp.gmail.com", 587)
+            server.starttls()
+            server.login(sender_email, password)
 
-    except Exception as e:
-        st.error(" Email Failed. Check App Password.")
+            server.sendmail(
+                sender_email,
+                receiver_email,
+                f"Subject: Insurance App Message\n\n{message}"
+            )
+
+            server.quit()
+
+            st.success("✅ Email Sent Successfully")
+
+        except Exception as e:
+            st.error("❌ Email Failed. Check App Password or secrets.")
 
 # ===============================
 # FOOTER
 # ===============================
 st.markdown("---")
-st.write(" AI Insurance System with Explainable AI")
+st.write("🚀 AI Insurance System with Explainable AI")

@@ -161,7 +161,7 @@ if st.button("Send Email"):
                 st.error("❌ Failed to send email")
 
         except Exception as e:
-            st.error(f"Error: {e}")
+            st.error(f"Error: {e}") 
 
 # ===============================
 # FOOTER

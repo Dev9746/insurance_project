@@ -8,7 +8,12 @@ import requests
 # ===============================
 model = joblib.load("model.pkl")
 scaler = joblib.load("scaler.pkl")
-
+try:
+    model = joblib.load("model.pkl")
+    scaler = joblib.load("scaler.pkl")
+except Exception as e:
+    st.error(f"Model Loading Error: {e}")
+    st.stop()
 # ===============================
 # PAGE CONFIG
 # ===============================
@@ -110,13 +115,30 @@ if st.button("🚀 View Prediction"):
     st.subheader("📊 Feature Importance")
 
     import matplotlib.pyplot as plt
+if hasattr(model, "feature_importances_"):
+
+    import matplotlib.pyplot as plt
 
     importances = model.feature_importances_
-    names = ["Age","Gender","Policy","Claim","Income","Medical","History","Fraud"]
+
+    names = [
+        "Age",
+        "Gender",
+        "Policy",
+        "Claim",
+        "Income",
+        "Medical",
+        "History",
+        "Fraud"
+    ]
 
     fig, ax = plt.subplots()
     ax.barh(names, importances)
     st.pyplot(fig)
+
+else:
+    st.info("Feature importance not available for this model.")
+    
 
 # ===============================
 # EMAIL SYSTEM (RESEND API)

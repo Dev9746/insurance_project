@@ -1,10 +1,7 @@
 import streamlit as st
-import numpy as np
-import joblib
-import traceback
 
 # ==========================
-# PAGE CONFIG (MUST BE FIRST)
+# PAGE CONFIG
 # ==========================
 st.set_page_config(
     page_title="Insurance Claim Predictor",
@@ -13,32 +10,15 @@ st.set_page_config(
 )
 
 # ==========================
-# LOAD MODEL
+# TEST APP
 # ==========================
-try:
-    model = joblib.load("model.pkl")
-    scaler = joblib.load("scaler.pkl")
+st.title("🏥 Insurance Claim Predictor")
 
-except Exception:
-    st.error("Model Loading Failed")
-    st.code(traceback.format_exc())
-    st.stop()
+st.success("✅ App Running Successfully")
 
-# ==========================
-# TITLE
-# ==========================
-st.title("🏥 Insurance Claim Approval Prediction")
-st.write("Enter customer details below.")
+st.write("Agar ye page open ho raha hai to Streamlit deployment sahi hai.")
 
-# ==========================
-# INPUTS
-# ==========================
-age = st.number_input(
-    "Age",
-    min_value=18,
-    max_value=100,
-    value=30
-)
+age = st.number_input("Age", 18, 100, 30)
 
 gender = st.selectbox(
     "Gender",
@@ -79,63 +59,5 @@ fraud = st.selectbox(
     ["No", "Yes"]
 )
 
-# ==========================
-# ENCODING
-# ==========================
-gender = 1 if gender == "Male" else 0
-
-policy_map = {
-    "Basic": 0,
-    "Gold": 1,
-    "Premium": 2
-}
-
-medical_map = {
-    "Average": 0,
-    "Good": 1,
-    "Poor": 2
-}
-
-policy = policy_map[policy]
-medical = medical_map[medical]
-fraud = 1 if fraud == "Yes" else 0
-
-# ==========================
-# PREDICTION
-# ==========================
-if st.button("🚀 Predict Claim Status"):
-
-    try:
-        features = np.array([[
-            age,
-            gender,
-            policy,
-            claim_amount,
-            income,
-            medical,
-            claim_history,
-            fraud
-        ]])
-
-        features = scaler.transform(features)
-
-        prediction = model.predict(features)[0]
-
-        probability = model.predict_proba(features)[0][1]
-
-        st.subheader("Prediction Result")
-
-        if prediction == 1:
-            st.success("✅ Claim Approved")
-        else:
-            st.error("❌ Claim Rejected")
-
-        st.metric(
-            "Approval Probability",
-            f"{probability:.2%}"
-        )
-
-    except Exception:
-        st.error("Prediction Failed")
-        st.code(traceback.format_exc())
-        
+if st.button("🚀 Test Button"):
+    st.success("Button Working Successfully")

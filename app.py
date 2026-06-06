@@ -1,12 +1,7 @@
 import streamlit as st
 import numpy as np
 import joblib
-
-# ==========================
-# LOAD MODEL
-# ==========================
-model = joblib.load("model.pkl")
-scaler = joblib.load("scaler.pkl")
+import traceback
 
 # ==========================
 # PAGE CONFIG
@@ -18,10 +13,21 @@ st.set_page_config(
 )
 
 st.title("🏥 Insurance Claim Approval Prediction")
-st.write("Enter customer details to predict claim approval.")
 
 # ==========================
-# INPUTS
+# LOAD MODEL SAFELY
+# ==========================
+try:
+    model = joblib.load("model.pkl")
+    scaler = joblib.load("scaler.pkl")
+
+except Exception as e:
+    st.error("Model Loading Failed")
+    st.code(traceback.format_exc())
+    st.stop()
+
+# ==========================
+# USER INPUTS
 # ==========================
 
 age = st.number_input(
@@ -44,14 +50,12 @@ policy = st.selectbox(
 claim_amount = st.number_input(
     "Claim Amount",
     min_value=1000,
-    max_value=500000,
     value=10000
 )
 
 income = st.number_input(
     "Income",
     min_value=10000,
-    max_value=1000000,
     value=50000
 )
 
@@ -61,7 +65,7 @@ medical = st.selectbox(
 )
 
 claim_history = st.slider(
-    "Previous Claims",
+    "Claim History",
     0,
     5,
     1
@@ -83,45 +87,54 @@ policy_map = {
     "Gold": 1,
     "Premium": 2
 }
-policy = policy_map[policy]
 
 medical_map = {
     "Average": 0,
     "Good": 1,
     "Poor": 2
 }
-medical = medical_map[medical]
 
+policy = policy_map[policy]
+medical = medical_map[medical]
 fraud = 1 if fraud == "Yes" else 0
 
 # ==========================
-# PREDICTION
+# PREDICT
 # ==========================
 
 if st.button("🚀 Predict Claim Status"):
 
-    features = np.array([[
-        age,
-        gender,
-        policy,
-        claim_amount,
-        income,
-        medical,
-        claim_history,
-        fraud
-    ]])
+    try:
 
-    features = scaler.transform(features)
+        features = np.array([[
+            age,
+            gender,
+            policy,
+            claim_amount,
+            income,
+            medical,
+            claim_history,
+            fraud
+        ]])
 
-    prediction = model.predict(features)[0]
+        features = scaler.transform(features)
 
-    probability = model.predict_proba(features)[0][1]
+        prediction = model.predict(features)[0]
 
-    st.subheader("Result")
+        probability = model.predict_proba(features)[0][1]
 
-    if prediction == 1:
-        st.success("✅ Claim Approved")
-    else:
-        st.error("❌ Claim Rejected")
+        st.subheader("Prediction Result")
 
-    st.write(f"Approval Probability: **{probability:.2%}**")
+        if prediction == 1:
+            st.success("✅ Claim Approved")
+        else:
+            st.error("❌ Claim Rejected")
+
+        st.metric(
+            "Approval Probability",
+            f"{probability:.2%}"
+        )
+
+    except Exception:
+        st.error("Prediction Failed")
+        st.code(traceback.format_exc())

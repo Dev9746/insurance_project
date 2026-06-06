@@ -1,23 +1,21 @@
 import streamlit as st
+import joblib
+import traceback
 
-st.set_page_config(page_title="Test")
+st.set_page_config(page_title="Model Test")
 
-st.title("Dependency Test")
-
-try:
-    import joblib
-    st.success("joblib imported")
-except Exception as e:
-    st.error(f"joblib error: {e}")
+st.title("Model Loading Test")
 
 try:
-    import sklearn
-    st.success(f"sklearn imported: {sklearn.__version__}")
-except Exception as e:
-    st.error(f"sklearn error: {e}")
+    model = joblib.load("model.pkl")
+    st.success("✅ model.pkl loaded successfully")
+except Exception:
+    st.error("❌ model.pkl failed")
+    st.code(traceback.format_exc())
 
 try:
-    import numpy as np
-    st.success(f"numpy imported: {np.__version__}")
-except Exception as e:
-    st.error(f"numpy error: {e}")
+    scaler = joblib.load("scaler.pkl")
+    st.success("✅ scaler.pkl loaded successfully")
+except Exception:
+    st.error("❌ scaler.pkl failed")
+    st.code(traceback.format_exc())

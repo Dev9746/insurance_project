@@ -6,7 +6,7 @@ import traceback
 import streamlit as st
 
 st.title("Test App")
-st.success("Streamlit Working")
+st.success("App Running Successfully")
 
 # ==========================
 # PAGE CONFIG

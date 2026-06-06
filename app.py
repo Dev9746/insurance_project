@@ -3,6 +3,11 @@ import numpy as np
 import joblib
 import traceback
 
+import streamlit as st
+
+st.title("Test App")
+st.success("Streamlit Working")
+
 # ==========================
 # PAGE CONFIG
 # ==========================

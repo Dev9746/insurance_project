@@ -3,13 +3,8 @@ import numpy as np
 import joblib
 import traceback
 
-import streamlit as st
-
-st.title("Test App")
-st.success("App Running Successfully")
-
 # ==========================
-# PAGE CONFIG
+# PAGE CONFIG (MUST BE FIRST)
 # ==========================
 st.set_page_config(
     page_title="Insurance Claim Predictor",
@@ -17,24 +12,27 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title("🏥 Insurance Claim Approval Prediction")
-
 # ==========================
-# LOAD MODEL SAFELY
+# LOAD MODEL
 # ==========================
 try:
     model = joblib.load("model.pkl")
     scaler = joblib.load("scaler.pkl")
 
-except Exception as e:
+except Exception:
     st.error("Model Loading Failed")
     st.code(traceback.format_exc())
     st.stop()
 
 # ==========================
-# USER INPUTS
+# TITLE
 # ==========================
+st.title("🏥 Insurance Claim Approval Prediction")
+st.write("Enter customer details below.")
 
+# ==========================
+# INPUTS
+# ==========================
 age = st.number_input(
     "Age",
     min_value=18,
@@ -84,7 +82,6 @@ fraud = st.selectbox(
 # ==========================
 # ENCODING
 # ==========================
-
 gender = 1 if gender == "Male" else 0
 
 policy_map = {
@@ -104,13 +101,11 @@ medical = medical_map[medical]
 fraud = 1 if fraud == "Yes" else 0
 
 # ==========================
-# PREDICT
+# PREDICTION
 # ==========================
-
 if st.button("🚀 Predict Claim Status"):
 
     try:
-
         features = np.array([[
             age,
             gender,
@@ -143,3 +138,4 @@ if st.button("🚀 Predict Claim Status"):
     except Exception:
         st.error("Prediction Failed")
         st.code(traceback.format_exc())
+        

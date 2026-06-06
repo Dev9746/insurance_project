@@ -1,10 +1,11 @@
 import streamlit as st
+import sklearn
 import joblib
 
-st.set_page_config(page_title="Test")
+st.write("sklearn:", sklearn.__version__)
 
-st.title("Joblib Test")
-st.success("Before loading model")
+model = joblib.load("model.pkl")
+st.success("model loaded")
 
-# model load mat karo
-st.success("After loading section")
+scaler = joblib.load("scaler.pkl")
+st.success("scaler loaded")

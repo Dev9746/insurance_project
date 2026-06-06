@@ -1,11 +1,10 @@
 import streamlit as st
+
+st.set_page_config(page_title="Debug Test")
+
+st.title("Debug Test")
+
 import sklearn
-import joblib
+st.write("sklearn version:", sklearn.__version__)
 
-st.write("sklearn:", sklearn.__version__)
-
-model = joblib.load("model.pkl")
-st.success("model loaded")
-
-scaler = joblib.load("scaler.pkl")
-st.success("scaler loaded")
+st.success("App Loaded")
